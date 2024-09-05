@@ -1,0 +1,37 @@
+{% extends 'firstapp/base.html' %}
+
+
+
+{% block content %}
+
+    <h1>ตอบคำถามลูกค้า</h1><br>
+    
+    <div class="container">
+        <center>
+        <h3>ชื่อผู้ติดต่อ : {{record.name}}</h3>
+        <h3>email : {{record.email}}</h3>
+        <h3>หัวข้อ : {{record.title}}</h3>
+        <hr>
+        <h4>รายละเอียด</h4>
+        <p>{{record.detail}}</p><br>
+        <hr>
+        {% if record.detail_answer %}
+            <h4>(ตอบแล้ว)</h4>
+            <p>{{record.detail_answer}}</p><br>
+        {% endif %}
+        </center>
+    </div>
+
+    <div class="container">
+        <form method="POST" id="askid" name="askid" value="{{record.id}}">
+            {% csrf_token %}
+            <input type="hidden">
+            <div class="form-group">
+                <label for="detail">รายละเอียดคำตอบ</label>
+                <textarea class="form-control" rows="5" id="detail_answer" name="detail_answer"></textarea><br>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+{% endblock content %}

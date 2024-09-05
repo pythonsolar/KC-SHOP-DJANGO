@@ -1,0 +1,132 @@
+{% extends 'firstapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="pt-5"></div>
+<form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+    {% csrf_token %}
+    <div class="card">
+        <div class="row no-gutters">
+            <aside class="col-md-6">
+                <article class="gallery-wrap">
+                    <div class="img-big-wrap">
+                        <a href="{{ product.images.url }}">
+                            <img src="{{ product.images.url }}" alt="{{ product.name }}" style="object-fit: cover;">
+                        </a>
+                    </div>
+                </article>
+            </aside>
+            <main class="col-md-6 border-left">
+                <article class="content-body p-4 text-left">
+                    <h4 class="price">{{ product.name }}</h4>
+                    <div class="mb-3">
+                        <h2 class="title">{{ product.introduction }}</h2>
+                        {% if price_1 %}
+                            <h4><del>ราคาปกติ {{ product.normal_price|cut:".0" }} บาท</del></h4>
+                            <h4 class="text-danger">มีส่วนลด เหลือเพียง {{ product.price1|cut:".0" }} บาท</h4>
+                        {% else %}
+                            <h4>ราคาปกติ {{ product.normal_price|cut:".0" }} บาท</h4>
+                        {% endif %}
+                    </div>
+                    <div class="container border border-dark p-3 my-3">
+                        <div class="form-group">
+                            <label for="count">จำนวน{{ product.unit }}</label>
+                            <input type="number" class="form-control" id="count" name="count" value="1" style="width: 100px;" min="1" required>
+                        </div>
+                        <input type="hidden" id="buyer_price" name="buyer_price" value="0">
+                        <input type="hidden" id="shipping_cost" name="shipping_cost" value="0">
+                        <h5>ค่าสินค้า: <span id="product_total"></span> บาท</h5>
+                        <h5>ค่าจัดส่ง: <span id="shipping_total"></span> บาท</h5>
+                        <h3 class="text-success">ยอดรวมทั้งหมด: <span id="all_total"></span> บาท</h3>
+                    </div>
+                    <hr>
+                </article>
+            </main>
+        </div>
+    </div>
+    <div class="py-5">
+        <p class="lead">{{ product.detail | safe }}</p>
+    </div>
+    <div class="row g-5">
+        <div class="col-md-5 col-lg-4 order-md-last">
+            {% if product.normal_price > 0 %}
+                <div>
+                    <h5>วิธีการชำระเงิน</h5>
+                    <div class="container border p-3 rounded mt-2">
+                        <h6>โอนผ่าน Promptpay</h6>
+                    </div>
+                    <div class="container border p-3 rounded mt-2">
+                        <h6>Scan QR Code ผ่านแอปธนาคาร</h6>
+                        <div class="qr-code img-responsive">
+                            <img src="https://promptpay.io/0105565133253/{{product.price1}}" id="qrcode_frame" frameborder="0" width="auto" height="auto"/>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-7 col-lg-8">
+            <h1 class="mb-3">ที่อยู่จัดส่ง</h1>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label for="first_name" class="form-label">ชื่อ</label>
+                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="ชื่อจริง" required>
+                    <div class="invalid-feedback">จำเป็นต้องกรอกชื่อ</div>
+                </div>
+                <div class="col-sm-6">
+                    <label for="last_name" class="form-label">นามสกุล</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="นามสกุล" required>
+                    <div class="invalid-feedback">จำเป็นต้องกรอกนามสกุล</div>
+                </div>
+                <div class="col-12">
+                    <label for="tel" class="form-label">เบอร์โทรศัพท์ <span class="text-muted">(ไม่บังคับ)</span></label>
+                    <input type="text" class="form-control" id="tel" name="tel" placeholder="เบอร์โทรศัพท์">
+                </div>
+                <div class="col-12">
+                    <label for="email" class="form-label">อีเมล์ <span class="text-muted">(ไม่บังคับ)</span></label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="ที่อยู่อีเมล์">
+                </div>
+                <div class="col-12">
+                    <label for="address" class="form-label">ที่อยู่</label>
+                    <input type="text" class="form-control" id="address" name="address" placeholder="ที่อยู่" required>
+                    <div class="invalid-feedback">จำเป็นต้องกรอกที่อยู่</div>
+                </div>
+                <div class="col-12">
+                    <label for="upload_slip" class="form-label">อัพโหลดสลิป</label>
+                    <input type="file" class="form-control" id="upload_slip" name="upload_slip" accept="image/*" required>
+                    <div class="valid-feedback">อัพโหลดแล้ว</div>
+                    <div class="invalid-feedback">จำเป็นต้องอัพโหลด</div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <button class="w-100 btn btn-primary btn-lg" type="submit">สั่งซื้อ</button>
+        </div>
+    </div>
+</form>
+<div class="pt-5"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var productPrice = parseFloat('{{ product_price }}');
+        var shippingCost = parseFloat('{{ product.shipping_cost }}');
+        var countInput = document.getElementById('count');
+
+        function calculateTotal() {
+            var count = Math.max(1, parseInt(countInput.value));
+            var productTotal = productPrice * count;
+            var shippingTotal = shippingCost * count;
+            var allTotal = productTotal + shippingTotal;
+
+            document.getElementById('product_total').innerText = productTotal.toFixed(2);
+            document.getElementById('shipping_total').innerText = shippingTotal.toFixed(2);
+            document.getElementById('all_total').innerText = allTotal.toFixed(2);
+
+            document.getElementById('buyer_price').value = productTotal;
+            document.getElementById('shipping_cost').value = shippingTotal;
+        }
+
+        countInput.addEventListener('change', calculateTotal);
+        calculateTotal();
+    });
+</script>
+
+{% endblock content %}

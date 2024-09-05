@@ -1,0 +1,53 @@
+{% extends 'firstapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<br><br>
+{% if user.is_authenticated and user.profile.usertype == 'vip' and user.discount.active == False %}
+<div class="container">
+    <div class="alert alert-primary" role="alert">
+        คุณได้รับ <a href="{% url 'discount' %}" class="alert-link">ส่วนลดพิเศษ</a> ลด 50%
+    </div>
+</div>
+{% endif %}
+
+<div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+    <h1 class="display-4 fw-normal text-body-white">สินค้าทั้งหมด</h1>
+    <p class="fs-5 text-body-white">ร้านขายของฉัน</p>
+</div>
+
+<main>
+    <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+        {% for product in all_product %}
+        <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+                <div class="card-header py-3">
+                    {% if product.images %}
+                    <img class="bd-placeholder-img card-img-top" width="100%" height="225" style="object-fit: cover;" src="{{ product.images.url }}" alt="{{ product.name }}">
+                    {% else %}
+                    <p>ไม่มีรูปภาพ</p>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title pricing-card-title"> ราคา {{ product.normal_price }}<small class="text-body-secondary fw-light">/THB</small></h3>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>{{ product.name }}</li>
+                        <li> หมวดหมู่ {{ product.category.category_name }}</li>
+                        <li>จำนวน {{ product.quantity }}<small class="text-body-secondary fw-light"> {{ product.unit }}</small></li>
+                    </ul>
+                    <div class="text-right">
+                        {% if user.is_authenticated and user.profile.usertype == 'member' %}
+                        <a href="{% url 'add-to-cart' product.id %}"><button type="button" class="btn btn-sm btn-outline-primary">เพิ่มไปยังรถเข็น</button></a>
+                        <a href="{% url 'product-detail' product.slug %}"><button type="button" class="btn btn-sm btn-primary">สั่งซื้อ</button></a>
+                        {% else %}
+                        <a href="{% url 'login' %}"><button type="button" class="btn btn-sm btn-danger">ไปที่หน้าล็อคอิน</button></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock content %}

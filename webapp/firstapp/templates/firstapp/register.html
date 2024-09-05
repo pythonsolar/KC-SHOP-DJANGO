@@ -1,0 +1,49 @@
+{% extends 'firstapp/base.html' %}
+
+
+
+{% block content %}
+
+{% if success %}
+
+<div class="alert alert-primary" role="alert">
+    คุณได้สมัครสมาชิกเรียบร้อยแล้ว
+</div>
+
+{% else %}
+
+    {% if usertaken %}
+        <div class="alert alert-warning" role="alert">
+            อีเมลนี้ถูกใช้งานไปแล้ว
+        </div>
+        <center>กรุณาล็อกอิน หรือ ลืมพาสเวิร์ด</center>
+    {% endif %}
+
+<h1>ลงทะเบียน</h1><br>
+
+<div class="container">
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="name">ชื่อ-สกุล</label>
+            <input type="text" class="form-control" id="name" name="name">
+        </div><br>
+
+        <div class="form-group">
+            <label for="email">email</label>
+            <input type="email" class="form-control" id="email" name="email">
+        </div><br>
+
+        <div class="form-group">
+            <label for="password">password</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div><br>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+{% endif %}
+
+{% endblock content %}

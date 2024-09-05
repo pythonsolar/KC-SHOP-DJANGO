@@ -1,0 +1,50 @@
+{% extends 'firstapp/base.html' %}
+
+
+
+{% block content %}
+
+    <h1>สอบถามปัญกาการใช้งาน</h1><br>
+
+    {% comment %} ชื่อผู้ติดต่อ (text) {% endcomment %}
+    {% comment %} email (text) {% endcomment %}
+    {% comment %} หัวข้อ (text) {% endcomment %}
+    {% comment %} รายละเอียด (textarea) {% endcomment %}
+
+    <div class="container">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">ชื่อผู้ติดต่อ</label>
+                <input type="text" class="form-control" id="name" name="name"><br>
+            </div>
+            <div class="form-group">
+                <label for="email">email</label>
+                <input type="text" class="form-control" id="email" name="email"><br>
+            </div>
+            {% comment %}
+            <div class="form-group">
+                <label for="title">หัวข้อ</label>
+                <input type="text" class="form-control" id="title" name="title"><br>
+            </div>
+            {% endcomment %}
+
+            <div class="form-group">
+                <label for="title">หัวข้อ</label>
+                <select  class="form-select" id="title" name="title">
+                    <option>สินค้า</option>
+                    <option>คืนสืนค้า</option>
+                    <option>เคลมสินค้า</option>
+                    <option>อื่นๆ</option>
+                  </select>
+            </div>
+
+            <div class="form-group">
+                <label for="detail">รายละเอียด</label>
+                <textarea class="form-control" rows="5" id="detail" name="detail"></textarea><br>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+{% endblock content %}

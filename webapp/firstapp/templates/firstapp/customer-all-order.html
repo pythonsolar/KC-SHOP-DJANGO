@@ -1,0 +1,72 @@
+{% extends 'firstapp/base.html' %}
+{% load static %}
+{% load humanize %} 
+
+{% block content %}
+
+<div class="container">
+    <div class="text-color-black">
+      <div class="text-color-black">
+        <h3>สินค้าทั้งหมด (admin)</h3>
+      </div>
+      <div style="padding: 5px"></div>
+      <table class="table">
+        <tr style="font-size: 14px;">
+            <th>ไอดี การสั่งซื้อ</th>
+            <th>ชื่อลูกค้า</th>
+            <th>เวลา</th> 
+            <th>เลขพัสดุขนส่ง</th>
+            <th>ค่าขนส่ง</th>
+            <th>ยอดรวม</th>
+            <th>ยอดรวมทั้งหมด</th>
+            <th>ใบบิล</th>
+            <th>จ่ายแล้ว</th>
+        </tr>
+        {% for co in cart_order %}
+        <tr style="font-size: 14px;">
+          <td><a href="{% url 'cart-order-update-tracking' co.order_id %}" style="font-size: 14px;">{{ co.order_id}}</a></td>
+          <td>{{ co.first_name }}</td>
+          <td>{{ co.stamp }}</td> 
+          <td>
+            {% if co.tracking_number != None %}
+                {{ co.tracking_number }}
+            {% endif %}
+          </td>
+          <td>{{ co.shipping_cost }}</td>
+          <td>{{ co.total|intcomma }}</td>
+          <td>{{ co.total|add:co.shipping_cost|intcomma }}</td>
+          <td>
+            {% if co.slip %}
+            <a href="{{ co.slip.url }}">
+              <i class="fa fa-address-card-o" 
+              style="font-size:14px;color:#0d6efd;">
+             ดูใบบิล
+              </i>
+            </a>
+          {% else %}
+            <!-- <a href="#">Upload slipt</a> -->
+            <i class="fa fa-close" 
+            style="font-size:14px;color:darkred;"> 
+            ยังไม่ได้อัปโหลด
+            </i>
+           {% endif %}
+          </td>
+          <td>
+            {% if co.paid and co.slip %}
+                <a href="{% url 'update-status' co.order_id 'cancle' %}"><i class="fa fa-check-square-o" style="font-size:14px;color:#2a8df4;">จ่ายแล้ว</i></a>
+            {% elif co.paid == False and not co.slip %}
+                <i class="fa fa-close" style="font-size:14px;color:darkred;">ยังไม่ได้จ่าย</i>
+            {% else %}
+                <a href="{% url 'update-status' co.order_id 'confirm' %}"><i class="fa fa-check" style="font-size:14px;color:green;">ยืนยัน</i></a>
+            {% endif %}    
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    <div style="padding: 5px"></div>
+    <div style="padding: 20px"></div>
+</div>
+
+
+{% endblock content %}

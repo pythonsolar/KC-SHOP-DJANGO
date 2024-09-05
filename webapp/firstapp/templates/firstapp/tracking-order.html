@@ -1,0 +1,39 @@
+{% extends 'firstapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="position-relative p-5 text-center bg-light border border-dashed rounded-5">
+        <p class="text-danger mb-4">
+            <strong>!!! กรุณาถ่ายภาพหน้านี้เก็บไว้เป็นหลักฐาน !!!</strong>
+        </p>
+        <p class="mb-4">
+            <span class="text-dark">เลขที่อ้างอิง</span> <span class="text-danger">{{ order_id }}</span>
+        </p>      
+        <p class="col-lg-6 mx-auto mb-4 text-muted">
+            หากมีความคืบหน้าทีมงานจะรีบติดต่อท่านทางอีเมล
+        </p>
+
+        <h4 class="mb-3"><strong class="text-dark">รายละเอียด</strong></h4>
+        <p><strong class="text-dark">สินค้า:</strong> <span class="text-dark">{{ tracking_id.products.name }} </span></p>
+        <p><strong class="text-dark">จำนวน:</strong> <span class="text-dark">{{ tracking_id.count }} {{ tracking_id.products.unit }} </span></p>
+        <p><strong class="text-dark">ราคาสินค้า:</strong> <span id="book_total" class="text-dark">{{ buyer_price }} บาท </span></p>
+        <p><strong class="text-dark">ค่าจัดส่ง:</strong> <span id="shipping_total" class="text-dark">{{ shipping_cost }} บาท </span></p>
+        <h4 class="mt-4 mb-4"><strong class="text-dark">ยอดรวมทั้งหมด:</strong> <span id="all_total" class="text-dark">{{ all_price }} บาท </span></h4>
+
+        <div class="my-4 text-center">
+            <a href="{{ tracking_id.slip.url }}">
+                <img src="{{ tracking_id.slip.url }}" alt="Payment Slip" width="400" class="border border-dark mx-auto d-block">
+            </a>
+        </div>
+
+        <hr>
+
+        <h4 class="mt-4 mb-3"><strong class="text-dark">ข้อมูลผู้ซื้อ:</strong></h4>
+        <p><strong class="text-dark">ชื่อ:</strong> <span class="text-dark">{{ tracking_id.first_name }} {{ tracking_id.last_name }}</span></p>
+        <p><strong class="text-dark">Email:</strong> <span class="text-dark">{{ tracking_id.email }}</span></p>
+        <p><strong class="text-dark">เบอร์โทร:</strong> <span class="text-dark">{{ tracking_id.tel }}</span></p>
+        <p><strong class="text-dark">ที่อยู่:</strong> <span class="text-dark">{{ tracking_id.address }}</span></p>
+    </div>
+</div>
+{% endblock content %}

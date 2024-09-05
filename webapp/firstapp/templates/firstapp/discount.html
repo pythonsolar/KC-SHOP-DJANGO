@@ -1,0 +1,30 @@
+{% extends 'firstapp/base.html' %}
+
+{% block content %}
+
+<h3>กรูณาอ่านเงื่อนไขสำหรับ "ส่วนลดพิเศษ"</h3><br>
+<div class="container">
+<p>
+    1.คุณต้อง
+    2.คุณต้อง
+    3. ....
+</p>
+</div>
+
+<div class="container">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <input class="form-check-input" type="checkbox" value="check-true" id="discount" name="discount">
+            <label class="form-check-label" for="discount">
+                ยอมรับเงื่อนไข
+            </label>
+            <br><br>
+        </div>
+        
+
+        <button type="submit" class="btn btn-primary">ยืนยันข้อตกลง</button>
+    </form>
+</div>
+
+{% endblock content %}
